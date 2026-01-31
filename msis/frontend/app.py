@@ -1,163 +1,183 @@
 import streamlit as st
-import requests
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+from pathlib import Path
 
-# ============================
-# Page Configuration
-# ============================
+# ---------------------------------
+# Page Config
+# ---------------------------------
 st.set_page_config(
     page_title="Market Shock Intelligence System",
     layout="wide"
 )
 
-# ============================
-# Header
-# ============================
-st.title("Market Shock Intelligence System (MSIS)")
-st.caption(
-    "Detecting market regimes using unsupervised learning on returns, volatility, and drawdowns."
-)
+# ---------------------------------
+# Load Data
+# ---------------------------------
+@st.cache_data
+def load_data():
+    data_path = Path(__file__).parent.parent / "outputs" / "regimes.csv"
+    return pd.read_csv(data_path)
 
-# ============================
-# Regime Labels & Colors
-# ============================
-REGIME_LABELS = {
-    0: "Low Volatility / Range-Bound Regime",
-    1: "Trend-Driven Growth Regime",
-    2: "Crisis / Stress Regime"
+df = load_data()
+
+# ---------------------------------
+# Regime Labels + Colors
+# ---------------------------------
+REGIME_META = {
+    0: {"label": "Low Volatility / Stable Market", "color": "#1f77b4"},
+    1: {"label": "Trend-Driven Growth Regime", "color": "#2ecc71"},
+    2: {"label": "Crisis / Stress Regime", "color": "#e74c3c"}
 }
 
-REGIME_COLORS = {
-    0: "#2E86C1",  # Blue
-    1: "#28B463",  # Green
-    2: "#CB4335"   # Red
-}
-
-# ============================
-# Sidebar Controls (Clean)
-# ============================
+# ---------------------------------
+# Sidebar
+# ---------------------------------
 st.sidebar.header("Market Controls")
 
 selected_regime = st.sidebar.selectbox(
     "Select Market Regime",
-    options=list(REGIME_LABELS.keys()),
-    format_func=lambda x: REGIME_LABELS[x]
+    options=sorted(df["regime"].unique()),
+    format_func=lambda x: REGIME_META[x]["label"]
 )
 
+regime_color = REGIME_META[selected_regime]["color"]
+regime_label = REGIME_META[selected_regime]["label"]
+
+# ---------------------------------
+# Dynamic CSS
+# ---------------------------------
+st.markdown(
+    f"""
+    <style>
+    .regime-title {{
+        color: {regime_color};
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }}
+
+    .left-bar {{
+        border-left: 6px solid {regime_color};
+        padding-left: 14px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }}
+
+    .sidebar-indicator {{
+        background-color: {regime_color}20;
+        border-left: 5px solid {regime_color};
+        padding: 10px;
+        font-weight: 600;
+        border-radius: 4px;
+        margin-top: 10px;
+    }}
+
+    section[data-testid="stSidebar"] select {{
+        border: 2px solid {regime_color} !important;
+        border-radius: 6px;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---------------------------------
+# Header
+# ---------------------------------
+st.markdown(
+    "<h2 style='margin-bottom:4px;'>Market Shock Intelligence System (MSIS)</h2>",
+    unsafe_allow_html=True
+)
+
+st.caption(
+    "Unsupervised detection of market regimes using returns, volatility, and drawdowns."
+)
+
+# ---------------------------------
+# Sidebar Indicator
+# ---------------------------------
 st.sidebar.markdown(
     f"""
-    <div style="
-        padding: 10px;
-        margin-top: 10px;
-        border-left: 5px solid {REGIME_COLORS[selected_regime]};
-        background-color: #f8f9fa;
-    ">
-        <strong>Selected Regime</strong><br>
-        {REGIME_LABELS[selected_regime]}
+    <div class="sidebar-indicator">
+        Selected Regime<br>
+        {regime_label}
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# ============================
-# Fetch Data from FastAPI
-# ============================
-API_URL = "http://127.0.0.1:8000/regimes"
-data = requests.get(API_URL).json()
-df = pd.DataFrame(data)
-
-regime_df = df[df["regime"] == selected_regime]
-
-# ============================
-# Regime Title
-# ============================
+# ---------------------------------
+# Main Regime Section
+# ---------------------------------
 st.markdown(
-    f"<h2 style='color:{REGIME_COLORS[selected_regime]}'>"
-    f"{REGIME_LABELS[selected_regime]}</h2>",
+    f"""
+    <div class="left-bar">
+        <div class="regime-title">{regime_label}</div>
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
-# ============================
-# Regime Metrics
-# ============================
+regime_df = df[df["regime"] == selected_regime]
+
+# ---------------------------------
+# Metrics
+# ---------------------------------
 col1, col2, col3 = st.columns(3)
 
-col1.metric(
-    "Average Daily Return",
-    f"{regime_df['return'].mean():.4f}"
-)
+col1.metric("Average Daily Return", f"{regime_df['return'].mean():.4f}")
+col2.metric("Average Volatility", f"{regime_df['volatility'].mean():.4f}")
+col3.metric("Average Drawdown", f"{regime_df['drawdown'].mean():.4f}")
 
-col2.metric(
-    "Average Volatility",
-    f"{regime_df['volatility'].mean():.4f}"
-)
-
-col3.metric(
-    "Average Drawdown",
-    f"{regime_df['drawdown'].mean():.4f}"
-)
-
-st.caption(
-    "Metrics represent averages across all days classified into this regime."
-)
-
-# ============================
-# Visual Analysis
-# ============================
+# ---------------------------------
+# Feature Distributions (BAR OUTLINES ONLY)
+# ---------------------------------
 st.subheader("Regime Feature Distributions")
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+def histogram_with_bar_edges(df, x, title):
+    fig = px.histogram(
+        df,
+        x=x,
+        nbins=40,
+        title=title,
+        opacity=0.8,
+        color_discrete_sequence=[regime_color]
+    )
+    fig.update_traces(
+        marker_line_width=0.6,
+        marker_line_color="rgba(0,0,0,0.6)"
+    )
+    return fig
 
-# Return Distribution
-axes[0].hist(
-    regime_df["return"],
-    bins=40,
-    color=REGIME_COLORS[selected_regime],
-    alpha=0.85
-)
-axes[0].set_title("Return Distribution")
-axes[0].set_xlabel("Daily Return")
-axes[0].set_ylabel("Frequency")
+c1, c2, c3 = st.columns(3)
 
-# Volatility Distribution
-axes[1].hist(
-    regime_df["volatility"],
-    bins=40,
-    color=REGIME_COLORS[selected_regime],
-    alpha=0.85
-)
-axes[1].set_title("Volatility Distribution")
-axes[1].set_xlabel("Volatility")
+with c1:
+    st.plotly_chart(
+        histogram_with_bar_edges(regime_df, "return", "Return Distribution"),
+        use_container_width=True
+    )
 
-# Drawdown Distribution
-axes[2].hist(
-    regime_df["drawdown"],
-    bins=40,
-    color=REGIME_COLORS[selected_regime],
-    alpha=0.85
-)
-axes[2].set_title("Drawdown Distribution")
-axes[2].set_xlabel("Drawdown")
+with c2:
+    st.plotly_chart(
+        histogram_with_bar_edges(regime_df, "volatility", "Volatility Distribution"),
+        use_container_width=True
+    )
 
-st.pyplot(fig)
+with c3:
+    st.plotly_chart(
+        histogram_with_bar_edges(regime_df, "drawdown", "Drawdown Distribution"),
+        use_container_width=True
+    )
 
-# ============================
-# Interpretation (Minimal & Clear)
-# ============================
+# ---------------------------------
+# Interpretation
+# ---------------------------------
 st.subheader("Regime Interpretation")
 
 if selected_regime == 0:
-    st.write(
-        "This regime reflects stable market conditions with low volatility and limited downside risk."
-    )
-
+    st.write("This regime represents calm market periods with low volatility and shallow drawdowns.")
 elif selected_regime == 1:
-    st.write(
-        "This regime captures sustained upward or downward trends with moderate volatility."
-    )
-
-elif selected_regime == 2:
-    st.write(
-        "This regime represents periods of market stress characterized by sharp volatility spikes and deep drawdowns."
-    )
+    st.write("This regime captures sustained growth trends with positive returns and moderate volatility.")
+else:
+    st.write("This regime reflects market stress periods characterized by high volatility and deep drawdowns.")

@@ -17,7 +17,11 @@ st.set_page_config(
 @st.cache_data
 def load_data():
     data_path = Path(__file__).parent.parent / "outputs" / "regimes.csv"
+    if not data_path.exists():
+        st.error(f"Data file not found: {data_path}")
+        st.stop()
     return pd.read_csv(data_path)
+
 
 df = load_data()
 

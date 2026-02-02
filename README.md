@@ -73,8 +73,7 @@ Frontend Dashboard (Next.js)
 | Feature Engineering | Python (pandas, numpy) |
 | Analysis & ML | Python (scikit-learn: KMeans, Logistic Regression, Random Forest, XGBoost) |
 | Visualization | matplotlib, seaborn |
-| Backend API | FastAPI |
-| Frontend | Streamlit |
+| Frontend & App Layer | Streamlitt |
 | Charts | Plotly |
 | Deployment | Streamlit |
 
@@ -97,8 +96,8 @@ MSIS/
 │   │   ├── regime_exploration.ipynb
 │   │   └── risks_failure_predictor.ipynb
 │   │
-│   ├── backend/                  # Backend API layer
-│   │   └── main.py               # FastAPI service serving ML outputs
+│   ├── backend/                  
+│   │   └── main.py               
 │   │
 │   ├── docs/                     # Model-specific documentation
 │   │   └── ML_model1.md

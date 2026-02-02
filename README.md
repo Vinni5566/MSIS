@@ -70,12 +70,13 @@ Frontend Dashboard (Next.js)
 | Layer | Technology |
 |----|----|
 | Data | CSV (Yahoo Finance / Kaggle) |
-| Analysis & ML | Python (pandas, numpy, scikit-learn) |
-| Visualization | matplotlib/seaborn |
+| Feature Engineering | Python (pandas, numpy) |
+| Analysis & ML | Python (scikit-learn: KMeans, Logistic Regression, Random Forest, XGBoost) |
+| Visualization | matplotlib, seaborn |
 | Backend API | FastAPI |
-| Frontend | Next.js (React) |
-| Charts | Recharts / Chart.js |
-| Deployment | Local / Demo |
+| Frontend | Streamlit |
+| Charts | Plotly |
+| Deployment | Streamlit |
 
 ---
 

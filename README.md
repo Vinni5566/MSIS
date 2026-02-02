@@ -93,9 +93,9 @@ MSIS/
 ├── msis/                         # Core application package
 │   │
 │   ├── analysis/                 # Model research & experimentation
+│   │   ├── Strategy_Failure_Predictor.ipynb
 │   │   ├── regime_exploration.ipynb
-│   │   ├── risks_failure_predictor.ipynb      
-│   │   └── Strategy_Failure_Predictor.ipynb   
+│   │   └── risks_failure_predictor.ipynb
 │   │
 │   ├── backend/                  # Backend API layer
 │   │   └── main.py               # FastAPI service serving ML outputs
@@ -108,13 +108,13 @@ MSIS/
 │   │   └── streamlit_dashboard.md
 │   │
 │   └── outputs/                  # Persisted model outputs
-│       ├── regimes.csv
-│       ├── regimes.json
 │       ├── Strategy_Failure_Predictor_outputs.csv
-│       └── Strategy_Failure_Predictor_outputs.json
+│       ├── Strategy_Failure_Predictor_outputs.json
+│       ├── regimes.csv
+│       └── regimes.json
 │
-├──LICENSE
-├──README.md                     # Project overview & usage
+├── LICENSE
+├── README.md                     # Project overview & usage
 ├── requirements.txt              # Python dependencies
 └── runtime.txt                   # Deployment/runtime configuration
  

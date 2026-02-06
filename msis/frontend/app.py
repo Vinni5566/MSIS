@@ -59,6 +59,10 @@ selected_regime = st.sidebar.selectbox(
     format_func=lambda x: REGIME_META[x]["label"]
 )
 
+# Manual reload (clears cache if CSV updated)
+if st.sidebar.button("Reload Data"):
+    st.cache_data.clear()
+    
 # Assign label and color after selection
 regime_label = REGIME_META[selected_regime]["label"]
 regime_color = REGIME_META[selected_regime]["color"]
@@ -306,7 +310,7 @@ st.markdown(f"""
 # Load CSV
 @st.cache_data
 def load_strategy_failure():
-    path = Path(__file__).resolve().parent.parent / "ml_outputs" / "failure_predictor.csv"
+    path = Path(__file__).resolve().parent.parent / "ml_outputs" / "strategy_failure.csv"
     if not path.exists():
         st.error(f"Strategy failure output file not found: {path}")
         st.stop()

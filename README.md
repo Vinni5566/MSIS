@@ -27,6 +27,28 @@ To build an explainable market intelligence system that:
 
 ---
 
+## ❓ Key Questions We Answer
+
+- Can historical market data be grouped into distinct behavioral regimes?
+- How does volatility evolve before market stress events?
+- How do simple models and strategies behave across regimes?
+- When do predictive models fail, and why?
+  
+
+---
+
+## 🧠 Models Overview
+
+| **Model**                               | **Core Question**                    | **Approach**                                              | **Key Output**                                        | **Why It Matters**                                              |
+| --------------------------------------- | ------------------------------------ | --------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| **Model 1: Market Regime Discovery**    | What types of market behavior exist? | KMeans clustering on **returns, volatility, drawdown**    | **Regime label per day** (calm / stressed / crisis)   | Provides **structural context** for all downstream analysis     |
+| **Model 2A: Drawdown Risk Prediction**  | How risky is the next trading day?   | **Logistic Regression** with **regime-aware features**    | **Probability of next-day drawdown**                  | Shows how risk **changes across regimes** in an explainable way |
+| **Model 2B: Strategy Failure Analysis** | When do models & strategies fail?    | Logistic, Random Forest, **XGBoost** + imbalance handling | **Failure probability** & regime-wise stress behavior | Evaluates **robustness**, not just prediction accuracy          |
+
+
+
+---
+
 ## 🏗️ System Design
 
 MSIS is built as a **decoupled analytics system**:
@@ -44,12 +66,7 @@ Precomputed Outputs
 ├─ CSV files
 └─ JSON files
         ↓
-Backend API (FastAPI)
-│
-├─ Reads computed results
-└─ Exposes insight endpoints
-        ↓
-Frontend Dashboard (Next.js)
+Frontend Dashboard (Streamlit)
 │
 ├─ Interactive charts
 ├─ Regime exploration
@@ -57,14 +74,7 @@ Frontend Dashboard (Next.js)
 ```
 
 ---
-## ❓ Key Questions We Answer
 
-- Can historical market data be grouped into distinct behavioral regimes?
-- How does volatility evolve before market stress events?
-- How do simple models and strategies behave across regimes?
-- When do predictive models fail, and why?
-  
----
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -83,32 +93,20 @@ Frontend Dashboard (Next.js)
 ```
 MSIS/
 │
-├── docs/                         # System-level documentation
-│   ├── ARCHITECTURE.md
-│   ├── ML_Models_Overview.md
-│   ├── PROJECT_DESIGN.md
-│   └── project_overview.md
-│
 ├── msis/                         # Core application package
 │   │
-│   ├── analysis/                 # Model research & experimentation
-│   │   ├── Strategy_Failure_Predictor.ipynb
+│   ├── ml_models/                 # Model research & experimentation
+│   │   ├── strategy_failure_predictor.ipynb
 │   │   ├── regime_exploration.ipynb
-│   │   └── risks_failure_predictor.ipynb
-│   │
-│   ├── backend/                  
-│   │   └── main.py               
-│   │
-│   ├── docs/                     # Model-specific documentation
-│   │   └── ML_model1.md
+│   │   └── drawdown_risks_predictor.ipynb
 │   │
 │   ├── frontend/                 # Frontend visualization layer
 │   │   ├── app.py                # Streamlit dashboard
 │   │   └── streamlit_dashboard.md
 │   │
 │   └── outputs/                  # Persisted model outputs
-│       ├── Strategy_Failure_Predictor_outputs.csv
-│       ├── Strategy_Failure_Predictor_outputs.json
+│       ├── strategy_failure_predictor.csv
+│       ├── strategy_failure_predictor.json
 │       ├── regimes.csv
 │       └── regimes.json
 │

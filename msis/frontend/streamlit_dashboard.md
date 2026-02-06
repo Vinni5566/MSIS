@@ -38,8 +38,6 @@ Unsupervised ML (KMeans)
 ↓
 Regime Labels (CSV / JSON)
 ↓
-FastAPI Backend
-↓
 Streamlit Frontend
 
 ```

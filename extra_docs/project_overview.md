@@ -124,7 +124,7 @@ Required metrics:
   - scikit-learn (ML models)
 - **Data Sources:**
   - Yahoo Finance
-  - Kaggle financial datasets
+  - Kaggle financial datasets (future)
 
 No paid APIs or real-time systems required.
 
@@ -153,7 +153,7 @@ Rather than predicting profits, it helps **understand uncertainty**, which is cr
 
 ---
 
-## 12. Anticipated Q/As
+## 12. Q/As
 
 **Q: Why not predict stock prices?**
 A: Prediction accuracy alone is unstable during crises. Understanding behaviour and model failure is more valuable and realistic.
@@ -169,7 +169,7 @@ A: Yes. Institutions prioritize risk awareness and regime detection over short-t
 
 ---
 
-## 13. Why This is Winning
+## 13. Track Alignment
 
 - Strong alignment with Track 5 objectives
 - Depth over surface-level ML
@@ -179,7 +179,7 @@ A: Yes. Institutions prioritize risk awareness and regime detection over short-t
 
 ---
 
-## 14. Final One-Line Pitch
+## 14. Final 
 
 > "We built a machine learning system that doesn’t just predict markets — it explains how and when markets break."
 

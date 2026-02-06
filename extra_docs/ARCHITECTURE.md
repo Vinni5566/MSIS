@@ -91,32 +91,6 @@ Dashboard / Report UI (ttabs, filters, isights, conclusions)
 
 ---
 
-# 📂Project Struture
-```
-  market-shock-intelligence/
-  │
-  ├── data/
-  │   └── sp500.csv
-  │
-  ├── analysis/
-  │   ├── feature_engineering.ipynb
-  │   ├── regime_detection.ipynb
-  │   └── robustness_analysis.ipynb
-  │
-  ├── outputs/
-  │   ├── regimes.json
-  │   ├── volatility.csv
-  │   └── strategy_metrics.csv
-  │
-  ├── backend/
-  │   └── main.py  (FastAPI)
-  │
-  ├── frontend/
-  │   └── nextjs-app/
-  │
-  └── README.md
-```
----
 # 🛠️ Tech Stack & Responsibility
 
 | System Layer                  | Responsibility                              | Tech Used                          | Why This Choice                 |
